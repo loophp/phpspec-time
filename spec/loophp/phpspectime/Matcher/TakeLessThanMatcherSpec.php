@@ -8,12 +8,11 @@ use loophp\phpspectime\Matcher\TakeLessThanMatcher;
 use PhpSpec\Exception\Example\MatcherException;
 use PhpSpec\Exception\Fracture\MethodNotFoundException;
 use PhpSpec\Formatter\Presenter\Presenter;
-use PhpSpec\ObjectBehavior;
 use PhpSpec\Wrapper\Unwrapper;
 use Prophecy\Argument;
 use Ubench;
 
-class TakeLessThanMatcherSpec extends ObjectBehavior
+class TakeLessThanMatcherSpec extends AbstractTakeThanMatcherSpec
 {
     public function it_can_checks_if_matcher_supports_provided_subject_and_matcher_name(Presenter $presenter, Unwrapper $unwrapper, Ubench $bench)
     {
@@ -57,7 +56,9 @@ class TakeLessThanMatcherSpec extends ObjectBehavior
 
     public function it_returns_true_when_a_call_is_not_shorter_than_expected(Presenter $presenter, Unwrapper $unwrapper, Ubench $bench)
     {
-        $expected = 10;
+        $expected = [10];
+        $given = 20.0;
+
         $subject = new class() {
             public function foo()
             {
@@ -65,45 +66,21 @@ class TakeLessThanMatcherSpec extends ObjectBehavior
             }
         };
 
-        $bench
-            ->start()
-            ->willReturn(0);
-
-        $bench
-            ->end()
-            ->willReturn(20);
-
-        $bench
-            ->getTime(true)
-            ->willReturn(20.0);
-
-        $unwrapper
-            ->unwrapAll(Argument::any())
-            ->willReturn(['foo', [$expected]]);
-
-        $presenter
-            ->presentValue($expected)
-            ->willReturn($expected);
-
-        $presenter
-            ->presentValue(20.0)
-            ->willReturn(20.0);
-
-        $presenter
-            ->presentValue(Argument::cetera())
-            ->willReturn(Argument::cetera());
+        $this->configureMockWithParameters($expected, $given, $presenter, $unwrapper, $bench);
 
         $this
             ->beConstructedWith($unwrapper, $presenter, $bench);
 
         $this
-            ->negativeMatch('foo', $subject, [$expected])()
+            ->negativeMatch('foo', $subject, $expected)()
             ->shouldReturn(true);
     }
 
     public function it_returns_true_when_a_call_is_shorter_than_expected(Presenter $presenter, Unwrapper $unwrapper, Ubench $bench)
     {
-        $expected = 10;
+        $expected = [10];
+        $given = 5.0;
+
         $subject = new class() {
             public function foo()
             {
@@ -111,45 +88,21 @@ class TakeLessThanMatcherSpec extends ObjectBehavior
             }
         };
 
-        $bench
-            ->start()
-            ->willReturn(0);
-
-        $bench
-            ->end()
-            ->willReturn(5);
-
-        $bench
-            ->getTime(true)
-            ->willReturn(5.0);
-
-        $unwrapper
-            ->unwrapAll(Argument::any())
-            ->willReturn(['foo', [$expected]]);
-
-        $presenter
-            ->presentValue($expected)
-            ->willReturn($expected);
-
-        $presenter
-            ->presentValue(5.0)
-            ->willReturn(5.0);
-
-        $presenter
-            ->presentValue(Argument::cetera())
-            ->willReturn(Argument::cetera());
+        $this->configureMockWithParameters($expected, $given, $presenter, $unwrapper, $bench);
 
         $this
             ->beConstructedWith($unwrapper, $presenter, $bench);
 
         $this
-            ->positiveMatch('foo', $subject, [$expected])()
+            ->positiveMatch('foo', $subject, $expected)()
             ->shouldReturn(true);
     }
 
     public function it_throws_when_a_call_is_not_shorter_than_expected(Presenter $presenter, Unwrapper $unwrapper, Ubench $bench)
     {
-        $expected = 20;
+        $expected = [20];
+        $given = 10.0;
+
         $subject = new class() {
             public function foo()
             {
@@ -157,46 +110,22 @@ class TakeLessThanMatcherSpec extends ObjectBehavior
             }
         };
 
-        $bench
-            ->start()
-            ->willReturn(0);
-
-        $bench
-            ->end()
-            ->willReturn(10);
-
-        $bench
-            ->getTime(true)
-            ->willReturn(10.0);
-
-        $unwrapper
-            ->unwrapAll(Argument::any())
-            ->willReturn(['foo', [$expected]]);
-
-        $presenter
-            ->presentValue($expected)
-            ->willReturn($expected);
-
-        $presenter
-            ->presentValue(10.0)
-            ->willReturn(10.0);
-
-        $presenter
-            ->presentValue(Argument::cetera())
-            ->willReturn(Argument::cetera());
+        $this->configureMockWithParameters($expected, $given, $presenter, $unwrapper, $bench);
 
         $this
             ->beConstructedWith($unwrapper, $presenter, $bench);
 
         $this
-            ->negativeMatch('foo', $subject, [$expected])
+            ->negativeMatch('foo', $subject, $expected)
             ->shouldThrow(MatcherException::class)
             ->during('__invoke');
     }
 
     public function it_throws_when_a_call_is_shorter_than_expected(Presenter $presenter, Unwrapper $unwrapper, Ubench $bench)
     {
-        $expected = 10;
+        $expected = [10];
+        $given = 20.0;
+
         $subject = new class() {
             public function foo()
             {
@@ -204,46 +133,22 @@ class TakeLessThanMatcherSpec extends ObjectBehavior
             }
         };
 
-        $bench
-            ->start()
-            ->willReturn(0);
-
-        $bench
-            ->end()
-            ->willReturn(20);
-
-        $bench
-            ->getTime(true)
-            ->willReturn(20.0);
-
-        $unwrapper
-            ->unwrapAll(Argument::any())
-            ->willReturn(['foo', [$expected]]);
-
-        $presenter
-            ->presentValue($expected)
-            ->willReturn($expected);
-
-        $presenter
-            ->presentValue(20.0)
-            ->willReturn(20.0);
-
-        $presenter
-            ->presentValue(Argument::cetera())
-            ->willReturn(Argument::cetera());
+        $this->configureMockWithParameters($expected, $given, $presenter, $unwrapper, $bench);
 
         $this
             ->beConstructedWith($unwrapper, $presenter, $bench);
 
         $this
-            ->positiveMatch('foo', $subject, [$expected])
+            ->positiveMatch('foo', $subject, $expected)
             ->shouldThrow(MatcherException::class)
             ->during('__invoke');
     }
 
     public function it_throws_when_method_is_not_found(Presenter $presenter, Unwrapper $unwrapper, Ubench $bench)
     {
-        $expected = 10;
+        $expected = [10];
+        $given = 20.0;
+
         $subject = new class() {
             public function foo()
             {
@@ -251,37 +156,11 @@ class TakeLessThanMatcherSpec extends ObjectBehavior
             }
         };
 
-        $bench
-            ->start()
-            ->willReturn(0);
-
-        $bench
-            ->end()
-            ->willReturn(20);
-
-        $bench
-            ->getTime(true)
-            ->willReturn(20.0);
+        $this->configureMockWithParameters($expected, $given, $presenter, $unwrapper, $bench);
 
         $unwrapper
             ->unwrapAll(Argument::any())
             ->willReturn(['plop', [$expected]]);
-
-        $presenter
-            ->presentValue(10.0)
-            ->willReturn(20.0);
-
-        $presenter
-            ->presentValue(5.0)
-            ->willReturn(5.0);
-
-        $presenter
-            ->presentValue(15.0)
-            ->willReturn(15.0);
-
-        $presenter
-            ->presentValue(Argument::cetera())
-            ->willReturn(Argument::cetera());
 
         $this
             ->beConstructedWith($unwrapper, $presenter, $bench);
@@ -294,8 +173,9 @@ class TakeLessThanMatcherSpec extends ObjectBehavior
 
     public function it_throws_when_parameters_are_wrong(Presenter $presenter, Unwrapper $unwrapper, Ubench $bench)
     {
-        // Inverted parameters.
-        $expected = 'foo';
+        $expected = ['foo'];
+        $given = 20.0;
+
         $subject = new class() {
             public function foo()
             {
@@ -303,37 +183,7 @@ class TakeLessThanMatcherSpec extends ObjectBehavior
             }
         };
 
-        $bench
-            ->start()
-            ->willReturn(0);
-
-        $bench
-            ->end()
-            ->willReturn(20);
-
-        $bench
-            ->getTime(true)
-            ->willReturn(20.0);
-
-        $unwrapper
-            ->unwrapAll(Argument::any())
-            ->willReturn(['foo', [$expected]]);
-
-        $presenter
-            ->presentValue(10.0)
-            ->willReturn(20.0);
-
-        $presenter
-            ->presentValue(5.0)
-            ->willReturn(5.0);
-
-        $presenter
-            ->presentValue(15.0)
-            ->willReturn(15.0);
-
-        $presenter
-            ->presentValue(Argument::cetera())
-            ->willReturn(Argument::cetera());
+        $this->configureMockWithParameters($expected, $given, $presenter, $unwrapper, $bench);
 
         $this
             ->beConstructedWith($unwrapper, $presenter, $bench);
