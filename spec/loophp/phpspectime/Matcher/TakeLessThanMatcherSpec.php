@@ -4,21 +4,20 @@ declare(strict_types=1);
 
 namespace spec\loophp\phpspectime\Matcher;
 
+use loophp\nanobench\BenchmarkFactoryInterface;
+use loophp\nanobench\BenchmarkInterface;
+use loophp\nanobench\Time\TimeUnit;
 use loophp\phpspectime\Matcher\TakeLessThanMatcher;
 use PhpSpec\Exception\Example\MatcherException;
 use PhpSpec\Exception\Fracture\MethodNotFoundException;
 use PhpSpec\Formatter\Presenter\Presenter;
 use PhpSpec\Wrapper\Unwrapper;
 use Prophecy\Argument;
-use Ubench;
 
 class TakeLessThanMatcherSpec extends AbstractTakeThanMatcherSpec
 {
-    public function it_can_checks_if_matcher_supports_provided_subject_and_matcher_name(Presenter $presenter, Unwrapper $unwrapper, Ubench $bench)
+    public function it_can_checks_if_matcher_supports_provided_subject_and_matcher_name()
     {
-        $this
-            ->beConstructedWith($unwrapper, $presenter, $bench);
-
         $this
             ->supports('takeLessThan', 'bar', [3])
             ->shouldReturn(true);
@@ -43,18 +42,15 @@ class TakeLessThanMatcherSpec extends AbstractTakeThanMatcherSpec
             ->shouldReturn(1);
     }
 
-    public function it_is_initializable(Presenter $presenter, Unwrapper $unwrapper, Ubench $bench)
+    public function it_is_initializable()
     {
-        $this
-            ->beConstructedWith($unwrapper, $presenter, $bench);
-
         $this
             ->shouldHaveType(TakeLessThanMatcher::class);
     }
 
     // Inverted now
 
-    public function it_returns_true_when_a_call_is_not_shorter_than_expected(Presenter $presenter, Unwrapper $unwrapper, Ubench $bench)
+    public function it_returns_true_when_a_call_is_not_shorter_than_expected(Presenter $presenter, Unwrapper $unwrapper, BenchmarkFactoryInterface $benchmarkFactory, BenchmarkInterface $bench)
     {
         $expected = [10];
         $given = 20.0;
@@ -66,17 +62,19 @@ class TakeLessThanMatcherSpec extends AbstractTakeThanMatcherSpec
             }
         };
 
-        $this->configureMockWithParameters($expected, $given, $presenter, $unwrapper, $bench);
+        $unit = TimeUnit::SECOND;
+
+        $this->configureMockWithParameters($expected, $given, $presenter, $unwrapper, $benchmarkFactory, $bench, $unit);
 
         $this
-            ->beConstructedWith($unwrapper, $presenter, $bench);
+            ->beConstructedWith($unwrapper, $presenter, $benchmarkFactory, ['timeunit' => $unit]);
 
         $this
             ->negativeMatch('foo', $subject, $expected)()
             ->shouldReturn(true);
     }
 
-    public function it_returns_true_when_a_call_is_shorter_than_expected(Presenter $presenter, Unwrapper $unwrapper, Ubench $bench)
+    public function it_returns_true_when_a_call_is_shorter_than_expected(Presenter $presenter, Unwrapper $unwrapper, BenchmarkFactoryInterface $benchmarkFactory, BenchmarkInterface $bench)
     {
         $expected = [10];
         $given = 5.0;
@@ -88,17 +86,19 @@ class TakeLessThanMatcherSpec extends AbstractTakeThanMatcherSpec
             }
         };
 
-        $this->configureMockWithParameters($expected, $given, $presenter, $unwrapper, $bench);
+        $unit = TimeUnit::SECOND;
+
+        $this->configureMockWithParameters($expected, $given, $presenter, $unwrapper, $benchmarkFactory, $bench, $unit);
 
         $this
-            ->beConstructedWith($unwrapper, $presenter, $bench);
+            ->beConstructedWith($unwrapper, $presenter, $benchmarkFactory, ['timeunit' => $unit]);
 
         $this
             ->positiveMatch('foo', $subject, $expected)()
             ->shouldReturn(true);
     }
 
-    public function it_throws_when_a_call_is_not_shorter_than_expected(Presenter $presenter, Unwrapper $unwrapper, Ubench $bench)
+    public function it_throws_when_a_call_is_not_shorter_than_expected(Presenter $presenter, Unwrapper $unwrapper, BenchmarkFactoryInterface $benchmarkFactory, BenchmarkInterface $benchmark)
     {
         $expected = [20];
         $given = 10.0;
@@ -110,10 +110,12 @@ class TakeLessThanMatcherSpec extends AbstractTakeThanMatcherSpec
             }
         };
 
-        $this->configureMockWithParameters($expected, $given, $presenter, $unwrapper, $bench);
+        $unit = TimeUnit::SECOND;
+
+        $this->configureMockWithParameters($expected, $given, $presenter, $unwrapper, $benchmarkFactory, $benchmark, $unit);
 
         $this
-            ->beConstructedWith($unwrapper, $presenter, $bench);
+            ->beConstructedWith($unwrapper, $presenter, $benchmarkFactory, ['timeunit' => $unit]);
 
         $this
             ->negativeMatch('foo', $subject, $expected)
@@ -121,7 +123,7 @@ class TakeLessThanMatcherSpec extends AbstractTakeThanMatcherSpec
             ->during('__invoke');
     }
 
-    public function it_throws_when_a_call_is_shorter_than_expected(Presenter $presenter, Unwrapper $unwrapper, Ubench $bench)
+    public function it_throws_when_a_call_is_shorter_than_expected(Presenter $presenter, Unwrapper $unwrapper, BenchmarkFactoryInterface $benchmarkFactory, BenchmarkInterface $bench)
     {
         $expected = [10];
         $given = 20.0;
@@ -133,10 +135,12 @@ class TakeLessThanMatcherSpec extends AbstractTakeThanMatcherSpec
             }
         };
 
-        $this->configureMockWithParameters($expected, $given, $presenter, $unwrapper, $bench);
+        $unit = TimeUnit::SECOND;
+
+        $this->configureMockWithParameters($expected, $given, $presenter, $unwrapper, $benchmarkFactory, $bench, $unit);
 
         $this
-            ->beConstructedWith($unwrapper, $presenter, $bench);
+            ->beConstructedWith($unwrapper, $presenter, $benchmarkFactory, ['timeunit' => $unit]);
 
         $this
             ->positiveMatch('foo', $subject, $expected)
@@ -144,7 +148,7 @@ class TakeLessThanMatcherSpec extends AbstractTakeThanMatcherSpec
             ->during('__invoke');
     }
 
-    public function it_throws_when_method_is_not_found(Presenter $presenter, Unwrapper $unwrapper, Ubench $bench)
+    public function it_throws_when_method_is_not_found(Presenter $presenter, Unwrapper $unwrapper, BenchmarkFactoryInterface $benchmarkFactory, BenchmarkInterface $bench)
     {
         $expected = [10];
         $given = 20.0;
@@ -156,14 +160,16 @@ class TakeLessThanMatcherSpec extends AbstractTakeThanMatcherSpec
             }
         };
 
-        $this->configureMockWithParameters($expected, $given, $presenter, $unwrapper, $bench);
+        $unit = TimeUnit::SECOND;
+
+        $this->configureMockWithParameters($expected, $given, $presenter, $unwrapper, $benchmarkFactory, $bench, $unit);
 
         $unwrapper
             ->unwrapAll(Argument::any())
             ->willReturn(['plop', [$expected]]);
 
         $this
-            ->beConstructedWith($unwrapper, $presenter, $bench);
+            ->beConstructedWith($unwrapper, $presenter, $benchmarkFactory, ['timeunit' => $unit]);
 
         $this
             ->positiveMatch('plop', $subject, [10])
@@ -171,7 +177,7 @@ class TakeLessThanMatcherSpec extends AbstractTakeThanMatcherSpec
             ->during('__invoke');
     }
 
-    public function it_throws_when_parameters_are_wrong(Presenter $presenter, Unwrapper $unwrapper, Ubench $bench)
+    public function it_throws_when_parameters_are_wrong(Presenter $presenter, Unwrapper $unwrapper, BenchmarkFactoryInterface $benchmarkFactory, BenchmarkInterface $bench)
     {
         $expected = ['foo'];
         $given = 20.0;
@@ -183,19 +189,21 @@ class TakeLessThanMatcherSpec extends AbstractTakeThanMatcherSpec
             }
         };
 
-        $this->configureMockWithParameters($expected, $given, $presenter, $unwrapper, $bench);
+        $unit = TimeUnit::SECOND;
+
+        $this->configureMockWithParameters($expected, $given, $presenter, $unwrapper, $benchmarkFactory, $bench, $unit);
 
         $this
-            ->beConstructedWith($unwrapper, $presenter, $bench);
+            ->beConstructedWith($unwrapper, $presenter, $benchmarkFactory, ['timeunit' => $unit]);
 
         $this
             ->shouldThrow(MatcherException::class)
             ->during('positiveMatch', ['foo', $subject, [$expected]]);
     }
 
-    public function let(Presenter $presenter, Unwrapper $unwrapper, Ubench $bench)
+    public function let(Presenter $presenter, Unwrapper $unwrapper, BenchmarkFactoryInterface $benchmarkFactory, BenchmarkInterface $bench)
     {
         $this
-            ->beConstructedWith($unwrapper, $presenter, $bench);
+            ->beConstructedWith($unwrapper, $presenter, $benchmarkFactory, ['timeunit' => TimeUnit::MILLISECOND]);
     }
 }

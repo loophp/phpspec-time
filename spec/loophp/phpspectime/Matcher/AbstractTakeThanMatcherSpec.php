@@ -4,27 +4,28 @@ declare(strict_types=1);
 
 namespace spec\loophp\phpspectime\Matcher;
 
-use PhpSpec\Formatter\Presenter\Presenter;
+use loophp\nanobench\Time\Duration;
+use loophp\nanobench\Time\Time;
 use PhpSpec\ObjectBehavior;
-use PhpSpec\Wrapper\Unwrapper;
 use Prophecy\Argument;
-use Ubench;
 
 abstract class AbstractTakeThanMatcherSpec extends ObjectBehavior
 {
-    protected function configureMockWithParameters($expected, $given, Presenter $presenter, Unwrapper $unwrapper, Ubench $bench): void
+    protected function configureMockWithParameters($expected, $given, $presenter, $unwrapper, $benchmarkFactory, $benchmark, string $unit): void
     {
-        $bench
-            ->start()
-            ->willReturn(0);
+        $duration = new Duration(new Time(0, $unit), new Time($given, $unit), $unit);
 
-        $bench
-            ->end()
-            ->willReturn($given);
+        $benchmarkFactory
+            ->fromCallable(Argument::cetera(), Argument::cetera())
+            ->willReturn($benchmark);
 
-        $bench
-            ->getTime(true)
-            ->willReturn($given);
+        $benchmark
+            ->run()
+            ->willReturn($benchmark);
+
+        $benchmark
+            ->getDuration()
+            ->willReturn($duration);
 
         $unwrapper
             ->unwrapAll(Argument::any())

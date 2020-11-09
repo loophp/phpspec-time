@@ -15,9 +15,9 @@ A [PHPSpec][phpspec] extension providing matchers for measuring time in tests.
 
 New matchers:
 
-* `shouldTakeLessThan(float $seconds)`
-* `shouldTakeMoreThan(float $seconds)`
-* `shouldTakeInBetween(float $from, float $to)`
+* `shouldTakeLessThan(float $timeUnit)`
+* `shouldTakeMoreThan(float $timeUnit)`
+* `shouldTakeInBetween(float $fromTimeUnit, float $toTimeUnit)`
 
 ## Installation
 
@@ -30,6 +30,53 @@ Add the extension to the phpspec configuration file:
 ```yaml
 extensions:
     loophp\phpspectime\Extension: ~
+```
+
+By default, the time unit is in `second`, however other units are available:
+
+* `nanosecond`
+* `microsecond`
+* `millisecond`
+* `second`
+* `minute`
+* `hour`
+* `day`
+* `week`
+
+If you want to change the time unit edit the extension configuration as such:
+
+```yaml
+extensions:
+    loophp\phpspectime\Extension:
+        unit: nanosecond
+```
+
+In your tests, you'll have now access to the following new matchers:
+
+```php
+    $this
+        ->shouldTakeMoreThan(10)
+        ->during('method');
+
+    $this
+        ->shouldNotTakeMoreThan(10)
+        ->during('method');
+
+    $this
+        ->shouldTakeLessThan(10)
+        ->during('method');
+
+    $this
+        ->shouldNotTakeLessThan(10)
+        ->during('method');
+
+    $this
+        ->shouldTakeInBetween(3.0, 3.2)
+        ->during('method');
+
+    $this
+        ->shouldNotTakeInBetween(3.0, 3.2)
+        ->during('method');
 ```
 
 ## Code quality, tests and benchmarks

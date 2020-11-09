@@ -2,29 +2,17 @@
 
 declare(strict_types=1);
 
-/*
- * This file is part of PhpSpec, A php toolset to drive emergent
- * design by specification.
- *
- * (c) Marcello Duarte <marcello.duarte@gmail.com>
- * (c) Konstantin Kudryashov <ever.zet@gmail.com>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
-
 namespace loophp\phpspectime\Matcher;
 
+use loophp\nanobench\BenchmarkFactoryInterface;
 use PhpSpec\Exception\Example\MatcherException;
 use PhpSpec\Exception\Fracture\MethodNotFoundException;
 use PhpSpec\Formatter\Presenter\Presenter;
 use PhpSpec\Matcher\Matcher;
 use PhpSpec\Wrapper\DelayedCall;
 use PhpSpec\Wrapper\Unwrapper;
-use Ubench;
 
 use function call_user_func;
-use function call_user_func_array;
 use function count;
 use function get_class;
 use function in_array;
@@ -32,11 +20,16 @@ use function in_array;
 abstract class AbstractTakeThanMatcher implements Matcher
 {
     /**
-     * @var Ubench
+     * @var BenchmarkFactoryInterface
      */
-    protected $bench;
+    protected $benchmarkFactory;
 
     protected $keywords;
+
+    /**
+     * @var array
+     */
+    protected $params;
 
     /**
      * @var \PhpSpec\Formatter\Presenter\Presenter
@@ -48,11 +41,29 @@ abstract class AbstractTakeThanMatcher implements Matcher
      */
     protected $unwrapper;
 
-    public function __construct(Unwrapper $unwrapper, Presenter $presenter, Ubench $bench)
-    {
+    public function __construct(
+        Unwrapper $unwrapper,
+        Presenter $presenter,
+        BenchmarkFactoryInterface $benchmarkFactory,
+        array $params
+    ) {
         $this->unwrapper = $unwrapper;
         $this->presenter = $presenter;
-        $this->bench = $bench;
+        $this->benchmarkFactory = $benchmarkFactory;
+        $this->params = $params;
+    }
+
+    /**
+     * @return float|string
+     */
+    public function bench(callable $callable, array $arguments)
+    {
+        return $this
+            ->benchmarkFactory
+            ->fromCallable($callable, ...$arguments)
+            ->run()
+            ->getDuration()
+            ->as($this->params['timeunit']);
     }
 
     public function getPriority(): int
@@ -78,18 +89,6 @@ abstract class AbstractTakeThanMatcher implements Matcher
     public function supports(string $name, $subject, array $arguments): bool
     {
         return in_array($name, $this->keywords, true) && 1 === count($arguments);
-    }
-
-    /**
-     * @return float|string
-     */
-    protected function bench(callable $callable, array $arguments)
-    {
-        $this->bench->start();
-        call_user_func_array($callable, $arguments);
-        $this->bench->end();
-
-        return $this->bench->getTime(true);
     }
 
     protected function getDelayedCall(callable $check, $subject, array $arguments): DelayedCall
@@ -122,7 +121,7 @@ abstract class AbstractTakeThanMatcher implements Matcher
     }
 
     /**
-     * @return numeric
+     * @return float
      */
     protected function getParameters(array $arguments)
     {
