@@ -48,7 +48,7 @@ If you want to change the time unit edit the extension configuration as such:
 ```yaml
 extensions:
     loophp\phpspectime\Extension:
-        unit: nanosecond
+        timeunit: nanosecond
 ```
 
 In your tests, you'll have now access to the following new matchers:
