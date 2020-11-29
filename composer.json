@@ -17,11 +17,11 @@
         "loophp/nanobench": "^1"
     },
     "require-dev": {
-        "drupol/php-conventions": "^2.0.2",
-        "friends-of-phpspec/phpspec-code-coverage": "^4.3.2",
-        "infection/infection": "^0.18",
+        "drupol/php-conventions": "^2.0.3",
+        "friends-of-phpspec/phpspec-code-coverage": "^5",
+        "infection/infection": "^0.18.2",
         "infection/phpspec-adapter": "^0.1.1",
-        "phpspec/phpspec": "^5.1.2 || ^6.2.1",
+        "phpspec/phpspec": "^7",
         "phpstan/phpstan-strict-rules": "^0.12",
         "vimeo/psalm": "^4"
     },
@@ -37,11 +37,5 @@
         "psr-4": {
             "spec\\loophp\\phpspectime\\": "./spec/loophp/phpspectime/"
         }
-    },
-    "scripts": {
-        "bench": "vendor/bin/phpbench run --report='generator: \"table\", cols: [ \"suite\", \"subject\", \"mean\", \"diff\", \"mem_peak\", \"mem_real\"], break: [\"benchmark\"]'",
-        "grumphp": "vendor/bin/grumphp run",
-        "infection": "vendor/bin/infection run -j 2",
-        "phpspec": "vendor/bin/phpspec run"
     }
 }
