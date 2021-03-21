@@ -121,7 +121,7 @@ For more detailed changelogs, please check [the release changelogs][changelog-re
 [code quality]: https://img.shields.io/scrutinizer/quality/g/loophp/phpspec-time/master.svg?style=flat-square
 [code quality link]: https://scrutinizer-ci.com/g/loophp/phpspec-time/?branch=master
 
-[type coverage]: https://shepherd.dev/github/loophp/phpspec-time/coverage.svg
+[type coverage]: https://img.shields.io/badge/dynamic/json?style=flat-square&color=color&label=Type%20coverage&query=message&url=https%3A%2F%2Fshepherd.dev%2Fgithub%2Floophp%2Fphpspec-time%2Fcoverage
 [sheperd type coverage]: https://shepherd.dev/github/loophp/phpspec-time
 
 [code coverage]: https://img.shields.io/scrutinizer/coverage/g/loophp/phpspec-time/master.svg?style=flat-square
