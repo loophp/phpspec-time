@@ -92,10 +92,8 @@ final class TakeInBetweenMatcher extends AbstractTakeThanMatcher
 
         if ($to < $from) {
             throw new MatcherException(
-                sprintf(
-                    "Wrong argument provided in TakeInBetween matcher.\n" .
+                "Wrong argument provided in TakeInBetween matcher.\n" .
                     "First argument should be equal or greater to second argument.\n"
-                )
             );
         }
 
